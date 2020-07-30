@@ -10,6 +10,10 @@ defmodule LeenwoElixir.Endpoint do
     send_resp(conn, 200, "pong!")
   end
 
+  post "/leenwo" do
+    send_resp(conn, 200, "hello")
+  end
+
   post "/events" do
     {status, body} = case conn.body_params do
                        %{"events" => events} -> {200, process_events(events)}

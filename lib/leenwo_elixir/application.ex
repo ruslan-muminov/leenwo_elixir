@@ -10,9 +10,12 @@ defmodule LeenwoElixir.Application do
       # Starts a worker by calling: LeenwoElixir.Worker.start_link(arg)
       # {LeenwoElixir.Worker, arg}
       Plug.Cowboy.child_spec(
-        scheme: :http,
+        scheme: :https,
         plug: LeenwoElixir.Endpoint,
-        options: [port: 4001]
+        options: [port: 8443,
+                  otp_app: :leenwo_elixir,
+                  keyfile: "priv/ssl/leenwo.key",
+                  certfile: "priv/ssl/leenwo.pem"]
       )
     ]
 
