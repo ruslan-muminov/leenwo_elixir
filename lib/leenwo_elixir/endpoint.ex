@@ -1,6 +1,8 @@
 defmodule LeenwoElixir.Endpoint do
   use Plug.Router
 
+  require Logger
+
   plug(Plug.Logger)
   plug(:match)
   plug(Plug.Parsers, parsers: [:json], json_decoder: Poison)
@@ -10,8 +12,22 @@ defmodule LeenwoElixir.Endpoint do
     send_resp(conn, 200, "pong!")
   end
 
+  # "ZDAROVA" bot
   post "/leenwo" do
-    send_resp(conn, 200, "hello")
+    # %{"message" => %{"chat" => %{"id" => chat_id}}}= conn.body_params
+    # Nadia.send_message(chat_id, "ZDAROVA1")
+    # send_resp(conn, 200, "")
+
+    %{"message" => %{"chat" => %{"id" => chat_id}, "text" => text}}= conn.body_params
+    Logger.info("text = #{text}")
+    case String.split(text, ["/", " "], parts: 3) do
+      ["", command] -> LeenwoElixir.CommandHandler.handle_command(command, "", chat_id, conn)
+      ["", command, tail] -> LeenwoElixir.CommandHandler.handle_command(command, tail, chat_id, conn)
+      _ ->
+        Nadia.send_message(chat_id, "ZDAROVA1")
+        send_resp(conn, 200, "")
+    end
+
   end
 
   post "/events" do
@@ -37,4 +53,9 @@ defmodule LeenwoElixir.Endpoint do
   match _ do
     send_resp(conn, 404, "ooops... Nothing there :(")
   end
+
+  def call_send_resp(conn) do
+    send_resp(conn, 200, "")
+  end
+
 end
